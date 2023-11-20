@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Silver City",
+        "level_required": 0,
+        "is_city": true
+    },
+    {
+        "name": "Rocklifft Cavern",
+        "level_required": 1,
+        "is_city": false
+    },
+    {
+        "name": "Quarry",
+        "level_required": 4,
+        "is_city": false
+    }
+]

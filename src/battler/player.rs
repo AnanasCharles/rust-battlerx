@@ -1,7 +1,7 @@
 use colored::Colorize;
 use rand::Rng;
 use serde::{Serialize, Deserialize};
-use std::{io::stdin, error::Error, fs};
+use std::{io::{stdin, Read}, error::Error, fs::{self, File}};
 
 use super::enemy::Enemy;
 
@@ -91,12 +91,12 @@ impl Player {
     }
 
     pub fn add_exp(&mut self, xp: i32) {
-        println!("{} gained {} xp", self.name.green(), xp.to_string().yellow().bold());
+        println!("{} gained {} xp\n", self.name.green(), xp.to_string().yellow().bold());
         self.xp += xp;
         if self.xp >= self.next_level_xp {
             self.level_up();
         } else {
-            println!("{} now has {}/{} xp", self.name.green(), self.xp.to_string().yellow().bold(), self.next_level_xp.to_string().yellow().bold());
+            // println!("{} now has {}/{} xp", self.name.green(), self.xp.to_string().yellow().bold(), self.next_level_xp.to_string().yellow().bold());
         }
     }
 
@@ -106,12 +106,12 @@ impl Player {
         println!("{} has leveled up! {} => {}", self.name.green(), old_level.to_string().yellow().bold(), self.level.to_string().yellow().bold());
         self.max_health += 10;
         self.health = self.max_health;
-        self.next_level_xp = self.next_level_xp * 2;
+        self.next_level_xp = self.next_level_xp + 50 * self.level.pow(2);
         self.stat_points += 5;
         if self.xp >= self.next_level_xp {
             self.level_up();
         } else {
-            println!("{} now has {}/{} xp", self.name.green(), self.xp.to_string().yellow().bold(), self.next_level_xp.to_string().yellow().bold());
+            // println!("{} now has {}/{} xp", self.name.green(), self.xp.to_string().yellow().bold(), self.next_level_xp.to_string().yellow().bold());
         }
     }
 
@@ -184,7 +184,7 @@ impl Player {
         println!("Name: {:>13}", self.name.green().bold());
         println!("Level: {:>9}", self.level.to_string().yellow().bold());
         println!("XP: {:>12}/{}", self.xp.to_string().yellow().bold(), self.next_level_xp.to_string().yellow().bold());
-        println!("Health: {:>10}/{} {:>20}", self.health.to_string().red().bold(), self.max_health.to_string().red().bold(), "(+10 per point)".green().bold());
+        println!("Health: {:>9}/{} {:>20}", self.health.to_string().red().bold(), self.max_health.to_string().red().bold(), "(+5 per point)".green().bold());
         println!("Damage: {:>8} {:>25}", self.damage.to_string().yellow().bold(), "(+1 per point)".green().bold());
         println!("Defense: {:>7} {:>25}", self.defense.to_string().yellow().bold(), "(+1 per point)".green().bold());
         println!("Speed: {:>9} {:>26}", self.speed.to_string().yellow().bold(), "(+1% per point)".green().bold());
@@ -202,6 +202,71 @@ impl Player {
             if input == "Y" || input == "y" {
                 self.distribute_stat_points();
             }
+        }
+    }
+
+    pub fn change_location(&mut self) {
+        let locations_json = "data/locations/locations.json";
+        let mut file = match File::open(locations_json) {
+            Ok(file) => file,
+            Err(_) => {
+                println!("Error opening location file: {}", locations_json);
+                return;
+            }
+        };
+
+        let mut file_contents = String::new();
+        if let Err(_) = file.read_to_string(&mut file_contents) {
+            println!("Error reading location file: {}", locations_json);
+            return;
+        }
+
+        let locations: Vec<serde_json::Value> = match serde_json::from_str(&file_contents) {
+            Ok(locations) => locations,
+            Err(_) => {
+                println!("Error parsing JSON in location file: {}", locations_json);
+                return;
+            }
+        };
+
+        println!("Available locations for level {}: ", self.level);
+        for (index, loc) in locations.iter().enumerate().filter(|(_, loc)| {
+            let required_level = loc["level_required"].as_u64().unwrap_or_default() as i32;
+            required_level <= self.level
+        }) {
+            let name = loc["name"].as_str().unwrap_or_default();
+            if name == self.location {
+                println!("{} {}", index + 1, name.green().bold());
+            } else {
+                println!("{} {}", index + 1, name);
+            }
+        }
+
+        println!("Enter the ID of the location you want to travel to: ");
+        let mut user_input = String::new();
+        stdin().read_line(&mut user_input).expect("Failed to read line");
+
+        let chosen_index = match user_input.trim().parse::<usize>() {
+            Ok(index) => index,
+            Err(_) => {
+                println!("Invalid input. Please enter a valid ID.");
+                return;
+            }
+        };
+
+        if chosen_index > 0 && chosen_index <= locations.len() {
+            let chosen_location = locations[chosen_index - 1]["name"].as_str().unwrap_or_default();
+            let required_level = locations[chosen_index - 1]["level_required"].as_i64().unwrap_or_default() as i32;
+            
+            if self.level >= required_level {
+                self.location = chosen_location.to_string();
+                println!("Player has changed location to: {}", self.location);
+                self.save().expect("Failed to save player");
+            } else {
+                println!("Player's level is too low to access this location.");
+            }
+        } else {
+            println!("Invalid ID. Please enter a valid ID.");
         }
     }
 

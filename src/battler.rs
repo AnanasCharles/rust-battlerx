@@ -1,7 +1,7 @@
 pub mod enemy;
 pub mod player;
 
-use chrono::{Local, Utc};
+use chrono::Local;
 use enemy::Enemy;
 use player::Player;
 use rand::Rng;

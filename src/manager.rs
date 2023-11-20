@@ -1,4 +1,4 @@
- use std::io::stdin;
+use std::io::stdin;
 
 use colored::Colorize;
 
@@ -37,7 +37,7 @@ impl Manager {
     fn menu(&mut self) {
         loop {
             println!("{} {}", "=".repeat(25), "=".repeat(25));
-            println!{"{} ({}) HP: {} / {}", self.player.name.green().bold(), self.player.level.to_string().yellow().bold(), self.player.health.to_string().red().bold(), self.player.max_health.to_string().red().bold()}
+            println! {"{} ({}) | HP: {} / {} | EXP: {} / {}", self.player.name.green().bold(), self.player.level.to_string().yellow().bold(), self.player.health.to_string().red().bold(), self.player.max_health.to_string().red().bold(), self.player.xp.to_string().yellow().bold(), self.player.next_level_xp.to_string().yellow().bold()}
             println!("{} {}", "=".repeat(25), "=".repeat(25));
             println!("Welcome to the city!");
             println!("{} {}", "=".repeat(25), "=".repeat(25));
@@ -48,6 +48,9 @@ impl Manager {
                 "b" => {
                     self.change_state(ManagerState::Battling);
                     self.start();
+                }
+                "c" => {
+                    self.player.change_location();
                 }
                 "m" => {
                     todo!("Implement Manual");
@@ -78,7 +81,7 @@ impl Manager {
         if battler.player.health <= 0 {
             battler.player.health = 1;
         }
-        
+
         self.player = battler.player;
         self.player.save().expect("Failed to save player");
         self.start();
