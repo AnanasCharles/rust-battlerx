@@ -6,12 +6,12 @@
     },
     {
         "name": "Rocklifft Cavern",
-        "level_required": 1,
+        "level_required": 3,
         "is_city": false
     },
     {
         "name": "Quarry",
-        "level_required": 4,
+        "level_required": 5,
         "is_city": false
     }
 ]

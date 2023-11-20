@@ -1,0 +1,13 @@
+[
+    {
+        "name": "Rocky Golem",
+        "health": 200,
+        "level": 5,
+        "damage": 10,
+        "defense": 20,
+        "speed": 0.4,
+        "crit_chance": 0.0,
+        "crit_multi": 1.0,
+        "exp_reward": 300
+    }
+]
