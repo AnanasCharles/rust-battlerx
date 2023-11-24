@@ -41,13 +41,16 @@ impl Manager {
             println!("{} {}", "=".repeat(25), "=".repeat(25));
             println!("Welcome to the city!");
             println!("{} {}", "=".repeat(25), "=".repeat(25));
-            println!("b) Battle | h) Heal | s) Stat Check | m) Manual | q) Quit");
+            println!("b) Battle | d) Dungeoneering | c) City | h) Heal | s) Stat Check | m) Manual | q) Quit");
             let mut input = String::new();
             stdin().read_line(&mut input).expect("Failed to read line");
             match input.trim() {
                 "b" => {
                     self.change_state(ManagerState::Battling);
                     self.start();
+                }
+                "d" => {
+                    self.dungeoneer();
                 }
                 "c" => {
                     self.player.change_location();
@@ -70,6 +73,10 @@ impl Manager {
                 }
             }
         }
+    }
+
+    fn dungeoneer(&mut self) {
+        todo!("Implement Dungeoneering");
     }
 
     fn battle(&mut self) {

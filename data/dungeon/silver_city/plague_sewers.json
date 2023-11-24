@@ -1,0 +1,44 @@
+{
+  "name": "Plague Sewers",
+  "level_required": 5,
+  "is_dungeon": true,
+  "is_raid": false,
+  "exp_reward": 3000,
+  "enemies": [
+    {
+      "name": "Rocky Golem",
+      "health": 200,
+      "level": 5,
+      "damage": 10,
+      "defense": 20,
+      "speed": 0.4,
+      "crit_chance": 0.0,
+      "crit_multi": 1.0,
+      "exp_reward": 300
+    },
+    {
+      "name": "Gobleza",
+      "health": 50,
+      "level": 3,
+      "damage": 8,
+      "defense": 4,
+      "speed": 0.55,
+      "crit_chance": 0.12,
+      "crit_multi": 2.5,
+      "exp_reward": 120
+    }
+  ],
+  "bosses": [
+    {
+      "name": "Plague Manifester",
+      "health": 3000,
+      "level": 10,
+      "damage": 50,
+      "defense": 30,
+      "speed": 0.3,
+      "crit_chance": 0.15,
+      "crit_multi": 1.5,
+      "exp_reward": 1500
+    }
+  ]
+}
